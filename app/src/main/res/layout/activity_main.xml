@@ -10,10 +10,18 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/distanceView"
+        android:id="@+id/distance_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="48sp"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearance"/>
+
+    <TextView
+        android:id="@+id/location_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
         android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearance"/>
 

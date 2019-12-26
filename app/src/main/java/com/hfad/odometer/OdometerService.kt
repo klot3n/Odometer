@@ -11,27 +11,27 @@ import android.location.LocationManager
 import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.core.content.ContextCompat
 import java.util.Random
 
 class OdometerService : Service() {
 
-    private val binder: IBinder = OdometerBinder()
+    private val binder = OdometerBinder()
     var listener: LocationListener? = null
     var locManager: LocationManager? = null
-    val PERMISSION_STRING = android.Manifest.permission.ACCESS_FINE_LOCATION
-    var distanceInMeters: Double = 0.0
+//    val PERMISSION_STRING = android.Manifest.permission.ACCESS_FINE_LOCATION
+    var distanceInMeters: Float = 0F
     var lastLocation: Location? = null
-
 
     override fun onCreate() {
         super.onCreate()
 
         listener = object : LocationListener {
-            override fun onLocationChanged(location: Location?) {
+            override fun onLocationChanged(location: Location) {
                 if (lastLocation == null) lastLocation = location
-                distanceInMeters = distanceInMeters?.plus(location?.distanceTo(lastLocation)!!)
-                lastLocation = location
+                distanceInMeters += location.distanceTo(this@OdometerService.lastLocation)
+                this@OdometerService.lastLocation = location
             }
 
             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
@@ -65,18 +65,23 @@ class OdometerService : Service() {
     }
 
     inner class OdometerBinder : Binder() {
-        fun getOdometer(): OdometerService {
-            return OdometerService()
-        }
+        fun getOdometer() = this@OdometerService
     }
 
-    override fun onBind(intent: Intent): IBinder {
-        return binder
-    }
+    override fun onBind(intent: Intent): IBinder = binder
 
     fun getDistance(): Double {
-        return this.distanceInMeters / 1609.344
+        return this.distanceInMeters /1609.344
     }
-}
+
+    fun getLocation(): Location? {
+        return this.lastLocation
+    }
+
+    companion object{
+        const val PERMISSION_STRING = android.Manifest.permission.ACCESS_FINE_LOCATION
+    }
+
+ }
 
 
